@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RevitVersion Condition="'$(RevitVersion)' == ''">2024</RevitVersion>
+    <TargetFramework Condition="'$(RevitVersion)' == '2024'">net48</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' != '2024'">net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>TUNG_DIROOT.Revit$(RevitVersion)</AssemblyName>
+    <Product>TUNG_DIROOT</Product>
+    <Company>TUNG</Company>
+    <RootNamespace>TungDiroot.Addin</RootNamespace>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TungDiroot.Core\TungDiroot.Core.csproj" />
+    <ProjectReference Include="..\TungDiroot.Rendering\TungDiroot.Rendering.csproj" />
+    <ProjectReference Include="..\TungDiroot.Presentation\TungDiroot.Presentation.csproj" />
+    <Reference Include="RevitAPI" HintPath="$(RevitApiDir)\RevitAPI.dll" Private="false" />
+    <Reference Include="RevitAPIUI" HintPath="$(RevitApiDir)\RevitAPIUI.dll" Private="false" />
+    <Resource Include="Resources\TableGen16.png" />
+    <Resource Include="Resources\TableGen32.png" />
+    <Resource Include="Resources\ParameterLoader16.png" />
+    <Resource Include="Resources\ParameterLoader32.png" />
+    <Resource Include="Resources\DataLink16.png" />
+    <Resource Include="Resources\DataLink32.png" />
+    <Resource Include="Resources\Filter16.png" />
+    <Resource Include="Resources\Filter32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <Target Name="ValidateRevitApi" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(RevitApiDir)\RevitAPI.dll')" Text="RevitAPI.dll was not found under RevitApiDir=$(RevitApiDir)." />
+    <Error Condition="!Exists('$(RevitApiDir)\RevitAPIUI.dll')" Text="RevitAPIUI.dll was not found under RevitApiDir=$(RevitApiDir)." />
+  </Target>
+</Project>

@@ -1,0 +1,18 @@
+TUNG_DIROOT 1.3.0 — Third-Party Notices
+
+DocumentFormat.OpenXml 2.20.0
+Copyright Microsoft Corporation. Licensed under the MIT License.
+https://github.com/dotnet/Open-XML-SDK
+
+Newtonsoft.Json 13.0.1
+Copyright James Newton-King. Licensed under the MIT License.
+https://github.com/JamesNK/Newtonsoft.Json
+
+System.Memory and supporting Microsoft .NET runtime libraries
+Copyright .NET Foundation and contributors. Licensed under the MIT License.
+https://github.com/dotnet/runtime
+
+xUnit and Microsoft.NET.Test.Sdk are development/test dependencies only and are not included in the add-in payload.
+
+Autodesk Revit API assemblies are referenced from the installed Revit product and are never redistributed with TUNG_DIROOT.
+Microsoft Excel is optional and is not redistributed. TUNG_DIROOT's built-in renderer does not require Excel.

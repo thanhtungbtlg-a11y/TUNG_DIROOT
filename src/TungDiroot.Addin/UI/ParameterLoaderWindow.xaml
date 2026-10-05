@@ -1,0 +1,74 @@
+<Window x:Class="TungDiroot.Addin.UI.ParameterLoaderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TUNG_DIROOT — Parameter Loader" Width="1500" Height="900" MinWidth="760" MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+  <Grid Margin="14">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+      <TextBlock Text="Gán Shared Parameter vào project" FontSize="22" FontWeight="SemiBold"/>
+      <TextBlock Text="Chọn file Shared Parameter và Excel cấu hình; luôn Kiểm tra trước khi gán." Foreground="#56616F"/>
+    </StackPanel>
+
+    <Grid Grid.Row="1" Margin="0,0,0,10">
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBlock Text="Shared Parameter (.txt)" VerticalAlignment="Center" FontWeight="SemiBold"/>
+      <TextBox Grid.Column="1" Text="{Binding SharedParameterPath, UpdateSourceTrigger=PropertyChanged}" Padding="7,5" Margin="8,0"/>
+      <Button Grid.Column="2" Content="Chọn TXT…" Click="BrowseSharedParameter_Click" Padding="14,6"/>
+      <TextBlock Grid.Row="1" Text="Excel cấu hình" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,8,0,0"/>
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding WorkbookPath, UpdateSourceTrigger=PropertyChanged}" Padding="7,5" Margin="8,8,8,0"/>
+      <Button Grid.Row="1" Grid.Column="2" Content="Chọn Excel…" Click="BrowseWorkbook_Click" Padding="14,6" Margin="0,8,0,0"/>
+    </Grid>
+
+    <Grid Grid.Row="2" Margin="0,0,0,10">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="210"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Padding="8,6" ToolTip="Tìm theo group, tên, GUID, category hoặc nguyên nhân"/>
+      <ComboBox x:Name="StatusFilterBox" Grid.Column="1" SelectedValue="{Binding StatusFilter}"
+                SelectedValuePath="Value" DisplayMemberPath="Label" Margin="8,0" Padding="7"/>
+      <Button Grid.Column="2" Content="Kiểm tra" Command="{Binding AnalyzeCommand}" Padding="18,7" Background="#2A7DAF" Foreground="White"/>
+    </Grid>
+
+    <DataGrid x:Name="PlansGrid" Grid.Row="3" ItemsSource="{Binding VisibleRows}" AutoGenerateColumns="False"
+              CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" SelectionUnit="FullRow"
+              GridLinesVisibility="Horizontal" MinHeight="120">
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Header="Chọn" Width="52">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate>
+            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding CanSelect}" Click="RowCheckBox_Click" HorizontalAlignment="Center"/>
+          </DataTemplate></DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Header="Trạng thái" Binding="{Binding StatusDisplay, Mode=OneWay}" IsReadOnly="True" Width="130"/>
+        <DataGridTextColumn Header="Parameter Group" Binding="{Binding DefinitionGroup, Mode=OneWay}" IsReadOnly="True" Width="130"/>
+        <DataGridTextColumn Header="Parameter Name" Binding="{Binding ParameterName, Mode=OneWay}" IsReadOnly="True" Width="170"/>
+        <DataGridTextColumn Header="GUID" Binding="{Binding GuidDisplay, Mode=OneWay}" IsReadOnly="True" Width="235"/>
+        <DataGridTextColumn Header="Binding" Binding="{Binding BindingDisplay, Mode=OneWay}" IsReadOnly="True" Width="85"/>
+        <DataGridTextColumn Header="Revit Group" Binding="{Binding RevitGroupKey, Mode=OneWay}" IsReadOnly="True" Width="115"/>
+        <DataGridTextColumn Header="Categories" Binding="{Binding CategoriesDisplay, Mode=OneWay}" IsReadOnly="True" Width="240"/>
+        <DataGridTextColumn Header="Hành động / nguyên nhân" Binding="{Binding Reason, Mode=OneWay}" IsReadOnly="True" Width="*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <WrapPanel Grid.Row="4" Margin="0,10,0,0">
+      <Button Content="Chọn tất cả hợp lệ" Command="{Binding SelectReadyCommand}" Padding="12,6" Margin="0,0,8,0"/>
+      <Button Content="Bỏ chọn" Command="{Binding ClearSelectionCommand}" Padding="12,6" Margin="0,0,8,0"/>
+      <Button Content="Đảo lựa chọn hợp lệ" Command="{Binding InvertReadyCommand}" Padding="12,6"/>
+      <TextBlock Text="{Binding ReadyCount, StringFormat=  Sẵn sàng: {0}}" VerticalAlignment="Center" Foreground="#147D64"/>
+      <TextBlock Text="{Binding AlreadyBoundCount, StringFormat=  Đã gán: {0}}" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding ReviewCount, StringFormat=  Cần xem xét: {0}}" VerticalAlignment="Center" Foreground="#A05A00"/>
+      <TextBlock Text="{Binding ErrorCount, StringFormat=  Lỗi nguồn: {0}}" VerticalAlignment="Center" Foreground="#B3261E"/>
+    </WrapPanel>
+
+    <Grid x:Name="FooterPanel" Grid.Row="5" Margin="0,12,0,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBlock Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="#6C2B91" Margin="0,0,12,0"/>
+      <Button x:Name="AssignButton" Grid.Column="1" Content="Gán parameter" Command="{Binding AssignCommand}" Padding="18,7" Margin="0,0,8,0" Background="#A84CC1" Foreground="White"/>
+      <Button x:Name="CloseButton" Grid.Column="2" Content="Đóng" Click="Close_Click" Padding="18,7"/>
+    </Grid>
+  </Grid>
+</Window>

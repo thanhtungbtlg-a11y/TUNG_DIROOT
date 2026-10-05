@@ -1,0 +1,60 @@
+<Window x:Class="TungDiroot.Addin.UI.FamilyReviserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TUNG_DIROOT — FamilyReviser" Width="1420" Height="860"
+        MinWidth="800" MinHeight="560" WindowStartupLocation="CenterScreen">
+  <Grid Margin="14">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <StackPanel Margin="0,0,0,10">
+      <TextBlock Text="FamilyReviser — kiểm tra và đổi tên Family / Type" FontSize="22" FontWeight="SemiBold"/>
+      <TextBlock x:Name="ModeText" Foreground="#56616F" TextWrapping="Wrap"/>
+    </StackPanel>
+
+    <WrapPanel x:Name="FamilyReviserToolbar" Grid.Row="1" Margin="0,0,0,8">
+      <Button x:Name="ExportButton" Content="Xuất inventory" Click="Export_Click" Padding="12,7" Margin="0,0,8,8"/>
+      <Button x:Name="BrowseButton" Content="Chọn workbook" Click="Browse_Click" Padding="12,7" Margin="0,0,8,8"/>
+      <Button x:Name="OpenButton" Content="Mở Excel" Click="Open_Click" Padding="12,7" Margin="0,0,8,8"/>
+      <TextBox x:Name="WorkbookPathBox" Width="560" MinWidth="260" Padding="7" Margin="0,0,8,8"/>
+      <Button x:Name="PreviewButton" Content="Đọc &amp; xem trước" Click="Preview_Click" Padding="12,7" Margin="0,0,8,8"/>
+    </WrapPanel>
+
+    <Grid Grid.Row="2" Margin="0,0,0,8">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <TextBlock Text="Regex quy ước tên (tùy chọn)" VerticalAlignment="Center" Margin="0,0,8,0"/>
+      <TextBox x:Name="NamingPatternBox" Grid.Column="1" Padding="7"
+               ToolTip="Ví dụ: ^TUNG_[A-Z0-9_]+$; bỏ trống để không kiểm tra quy ước."/>
+    </Grid>
+
+    <Border Grid.Row="3" Background="#F5ECF8" BorderBrush="#D8BFE1" BorderThickness="1" Padding="10" Margin="0,0,0,8">
+      <TextBlock TextWrapping="Wrap" Text="Trong Excel chỉ chỉnh APPLY, TARGET_FAMILY hoặc TARGET_TYPE. Preview chặn tên trống/ký tự cấm, dữ liệu stale, tên trùng, in-place family và tên sai regex. Chỉ dòng Ready mới chạy; mỗi dòng có transaction riêng và toàn lượt là một Undo."/>
+    </Border>
+
+    <DataGrid x:Name="PreviewGrid" Grid.Row="4" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+              CanUserDeleteRows="False" EnableRowVirtualization="True" EnableColumnVirtualization="True" GridLinesVisibility="Horizontal">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Dòng" Binding="{Binding ExcelRow}" Width="60"/>
+        <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="120"/>
+        <DataGridTextColumn Header="Family hiện tại" Binding="{Binding CurrentFamily}" Width="220"/>
+        <DataGridTextColumn Header="Type hiện tại" Binding="{Binding CurrentType}" Width="200"/>
+        <DataGridTextColumn Header="Tên đích" Binding="{Binding Target}" Width="220"/>
+        <DataGridCheckBoxColumn Header="Nested" Binding="{Binding IsNested}" Width="70"/>
+        <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="100"/>
+        <DataGridTextColumn Header="Mã" Binding="{Binding Code}" Width="220"/>
+        <DataGridTextColumn Header="Mô tả" Binding="{Binding Message}" Width="*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <Grid x:Name="FamilyReviserFooter" Grid.Row="5" Margin="0,12,0,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBlock x:Name="StatusText" Text="Sẵn sàng" Foreground="#6C2B91" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+      <WrapPanel Grid.Column="1">
+        <Button x:Name="ApplyButton" Content="Apply các dòng Ready" Click="Apply_Click" Padding="14,7" Margin="0,0,8,0"
+                Background="#A84CC1" Foreground="White" IsEnabled="False"/>
+        <Button x:Name="CloseButton" Content="Đóng" Click="Close_Click" Padding="18,7"/>
+      </WrapPanel>
+    </Grid>
+  </Grid>
+</Window>

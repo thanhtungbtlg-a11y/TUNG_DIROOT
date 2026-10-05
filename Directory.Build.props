@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TungDirootVersion Condition="'$(TungDirootVersion)' == ''">1.3.0</TungDirootVersion>
+    <Version>$(TungDirootVersion)</Version>
+    <AssemblyVersion>$(TungDirootVersion).0</AssemblyVersion>
+    <FileVersion>$(TungDirootVersion).0</FileVersion>
+    <InformationalVersion>$(TungDirootVersion)</InformationalVersion>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,125 @@
+<Window x:Class="TungDiroot.Addin.UI.DataLinkWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TUNG_DIROOT — DataLink" Width="1500" Height="900" MinWidth="760" MinHeight="520"
+        WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+  </Window.Resources>
+  <Grid Margin="14">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+      <TextBlock Text="DataLink — Revit ↔ Excel" FontSize="22" FontWeight="SemiBold"/>
+      <TextBlock Text="Xuất dữ liệu, kiểm tra thay đổi và chỉ áp dụng các dòng an toàn." Foreground="#56616F"/>
+    </StackPanel>
+
+    <TabControl x:Name="WorkflowTabs" Grid.Row="1">
+      <TabItem Header="1. Chọn dữ liệu">
+        <Grid Margin="10">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <WrapPanel Margin="0,0,0,10">
+            <TextBlock Text="Phạm vi" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="ScopeBox" SelectedValue="{Binding Scope}" SelectedValuePath="Value" DisplayMemberPath="Label"
+                      MinWidth="180" Padding="6" Margin="0,0,8,0"/>
+            <Button Content="Nạp category và parameter" Click="RefreshCatalog_Click" Padding="14,7"/>
+          </WrapPanel>
+          <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <Grid MinWidth="700">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
+              <GroupBox Header="Category" Margin="0,0,6,0">
+                <DataGrid ItemsSource="{Binding Categories}" AutoGenerateColumns="False" CanUserAddRows="False"
+                          IsReadOnly="False" EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True">
+                  <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Chọn" Width="55"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+                      <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                    </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Tên category" Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*"/>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id, Mode=OneWay}" IsReadOnly="True" Width="110"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+              </GroupBox>
+              <GroupBox Grid.Column="1" Header="Parameter" Margin="6,0,0,0">
+                <DataGrid ItemsSource="{Binding Parameters}" AutoGenerateColumns="False" CanUserAddRows="False"
+                          IsReadOnly="False" EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True">
+                  <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Chọn" Width="55"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+                      <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                    </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Tên parameter" Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*"/>
+                    <DataGridTextColumn Header="Cấp" Binding="{Binding ScopeDisplay, Mode=OneWay}" IsReadOnly="True" Width="90"/>
+                    <DataGridTextColumn Header="Kiểu" Binding="{Binding StorageKind, Mode=OneWay}" IsReadOnly="True" Width="90"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+              </GroupBox>
+            </Grid>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="2. Xuất / Nhập Excel">
+        <Grid Margin="12">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <TextBlock Text="File DataLink Excel (.xlsx)" FontWeight="SemiBold"/>
+          <Grid Grid.Row="1" Margin="0,8,0,12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBox x:Name="WorkbookPathBox" Padding="8,6" IsReadOnly="True"/>
+            <Button Grid.Column="1" Content="Chọn file…" Click="BrowseWorkbook_Click" Padding="14,7" Margin="8,0,0,0"/>
+          </Grid>
+          <StackPanel Grid.Row="2">
+            <WrapPanel>
+              <Button Content="Xuất Excel" Command="{Binding ExportCommand}" Padding="18,8" Margin="0,0,8,0" Background="#2A7DAF" Foreground="White"/>
+              <Button Content="Đọc và xem trước" Command="{Binding ImportCommand}" Padding="18,8" Background="#A84CC1" Foreground="White"/>
+            </WrapPanel>
+            <Border Background="#EAF6F3" Padding="12" Margin="0,14,0,0">
+              <TextBlock TextWrapping="Wrap" Text="DataLink không sửa Revit khi đọc Excel. Hãy kiểm tra tab Xem trước &amp; áp dụng; chỉ các dòng Sẵn sàng mới có thể chọn."/>
+            </Border>
+          </StackPanel>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="3. Xem trước &amp; áp dụng">
+        <Grid Margin="10">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <WrapPanel Margin="0,0,0,8">
+            <Button Content="Chọn tất cả hợp lệ" Command="{Binding SelectAllReadyCommand}" Padding="12,6" Margin="0,0,8,0"/>
+            <Button Content="Bỏ chọn" Command="{Binding ClearSelectionCommand}" Padding="12,6"/>
+          </WrapPanel>
+          <DataGrid x:Name="PreviewGrid" Grid.Row="1" ItemsSource="{Binding Rows}" AutoGenerateColumns="False"
+                    CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" EnableRowVirtualization="True"
+                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Header="Chọn" Width="55"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsEnabled="{Binding CanSelect}" HorizontalAlignment="Center"/>
+              </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+              <DataGridTextColumn Header="Trạng thái" Binding="{Binding StatusDisplay, Mode=OneWay}" IsReadOnly="True" Width="130"/>
+              <DataGridTextColumn Header="Element ID" Binding="{Binding ElementId, Mode=OneWay}" IsReadOnly="True" Width="100"/>
+              <DataGridTextColumn Header="Category" Binding="{Binding Category, Mode=OneWay}" IsReadOnly="True" Width="140"/>
+              <DataGridTextColumn Header="Family / Type" Binding="{Binding Family, Mode=OneWay}" IsReadOnly="True" Width="160"/>
+              <DataGridTextColumn Header="Parameter" Binding="{Binding ParameterName, Mode=OneWay}" IsReadOnly="True" Width="160"/>
+              <DataGridTextColumn Header="Giá trị cũ" Binding="{Binding OriginalDisplay, Mode=OneWay}" IsReadOnly="True" Width="150"/>
+              <DataGridTextColumn Header="Giá trị mới" Binding="{Binding EditedDisplay, Mode=OneWay}" IsReadOnly="True" Width="150"/>
+              <DataGridTextColumn Header="Kết quả kiểm tra" Binding="{Binding Message, Mode=OneWay}" IsReadOnly="True" Width="*"/>
+            </DataGrid.Columns>
+          </DataGrid>
+        </Grid>
+      </TabItem>
+    </TabControl>
+
+    <Grid Grid.Row="2" Margin="0,10,0,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <ProgressBar Height="5" IsIndeterminate="True" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"/>
+      <Button Grid.Column="1" Content="Hủy" Click="Cancel_Click" IsEnabled="{Binding IsBusy}" Padding="12,4" Margin="8,0,0,0"/>
+    </Grid>
+
+    <Grid x:Name="FooterPanel" Grid.Row="3" Margin="0,12,0,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBlock Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="#6C2B91" Margin="0,0,12,0"/>
+      <Button x:Name="ApplyButton" Grid.Column="1" Content="Áp dụng dòng đã chọn" Command="{Binding ApplyCommand}" Padding="18,7" Margin="0,0,8,0" Background="#A84CC1" Foreground="White"/>
+      <Button x:Name="CloseButton" Grid.Column="2" Content="Đóng" Click="Close_Click" Padding="18,7"/>
+    </Grid>
+  </Grid>
+</Window>

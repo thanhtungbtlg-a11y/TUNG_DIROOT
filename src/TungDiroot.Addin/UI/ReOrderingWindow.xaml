@@ -1,0 +1,49 @@
+<Window x:Class="TungDiroot.Addin.UI.ReOrderingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TUNG_DIROOT — ReOrdering" Width="1300" Height="820"
+        MinWidth="760" MinHeight="520" WindowStartupLocation="CenterScreen">
+  <Grid Margin="14">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <StackPanel Margin="0,0,0,10">
+      <TextBlock Text="ReOrdering — Family Parameters" FontSize="22" FontWeight="SemiBold"/>
+      <TextBlock Text="Đổi thứ tự parameter trong từng group bằng Excel; tự backup trước Apply và không Save family."
+                 Foreground="#56616F"/>
+    </StackPanel>
+
+    <WrapPanel x:Name="ReOrderingToolbar" Grid.Row="1" Margin="0,0,0,10">
+      <Button x:Name="ExportButton" Content="Xuất thứ tự hiện tại" Click="Export_Click" Padding="12,7" Margin="0,0,8,8"/>
+      <Button Content="Chọn workbook" Click="Browse_Click" Padding="12,7" Margin="0,0,8,8"/>
+      <Button x:Name="OpenButton" Content="Mở Excel" Click="Open_Click" Padding="12,7" Margin="0,0,8,8"/>
+      <TextBox x:Name="WorkbookPathBox" Width="560" MinWidth="280" Padding="7" Margin="0,0,8,8"/>
+      <Button x:Name="PreviewButton" Content="Đọc &amp; xem trước" Click="Preview_Click" Padding="12,7" Margin="0,0,8,8"/>
+    </WrapPanel>
+
+    <Border Grid.Row="2" Background="#F5ECF8" BorderBrush="#D8BFE1" BorderThickness="1" Padding="10" Margin="0,0,0,8">
+      <TextBlock TextWrapping="Wrap" Text="Chỉ chỉnh cột TARGET_ORDER_IN_GROUP. Mỗi group phải có đủ thứ tự 1…N, không trùng. NAME/GROUP/KEY và toàn bộ tập parameter phải giữ nguyên; parameter khác group không thể đổi vị trí group."/>
+    </Border>
+
+    <DataGrid x:Name="PreviewGrid" Grid.Row="3" AutoGenerateColumns="False" IsReadOnly="True"
+              CanUserAddRows="False" CanUserDeleteRows="False" EnableRowVirtualization="True" GridLinesVisibility="Horizontal">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Parameter" Binding="{Binding Name}" Width="1.4*"/>
+        <DataGridTextColumn Header="Group" Binding="{Binding GroupKey}" Width="1.2*"/>
+        <DataGridTextColumn Header="Hiện tại" Binding="{Binding CurrentOrder}" Width="85"/>
+        <DataGridTextColumn Header="Mục tiêu" Binding="{Binding TargetOrder}" Width="85"/>
+        <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="110"/>
+        <DataGridTextColumn Header="Mô tả" Binding="{Binding Message}" Width="2*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <Grid x:Name="ReOrderingFooter" Grid.Row="4" Margin="0,12,0,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <TextBlock x:Name="StatusText" Text="Sẵn sàng" Foreground="#6C2B91" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+      <WrapPanel Grid.Column="1">
+        <Button x:Name="ApplyButton" Content="Apply thứ tự" Click="Apply_Click" Padding="14,7" Margin="0,0,8,0"
+                Background="#A84CC1" Foreground="White" IsEnabled="False"/>
+        <Button x:Name="CloseButton" Content="Đóng" Click="Close_Click" Padding="18,7"/>
+      </WrapPanel>
+    </Grid>
+  </Grid>
+</Window>
